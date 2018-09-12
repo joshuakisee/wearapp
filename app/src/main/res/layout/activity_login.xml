@@ -80,7 +80,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <ProgressBar
-                android:id="@+id/loading"
+                android:id="@+id/loadingLogin"
                 android:layout_marginTop="35dp"
                 android:layout_below="@+id/userPasswordLog"
                 android:layout_width="match_parent"

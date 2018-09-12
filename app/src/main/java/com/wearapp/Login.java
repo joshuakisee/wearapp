@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AutoCompleteTextView;
@@ -30,6 +31,14 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.wearapp.PrefManager;*/
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,19 +50,20 @@ public class Login extends AppCompatActivity {
 
     private Button btLog;
     private PrefManager prefManager;
-    private TextView regtxt,tv_reset_password;
+    private TextView regtxt, tv_reset_password;
 
     private AutoCompleteTextView etEmail, etPassword;
     private ProgressBar loading;
+    ProgressDialog pDialog;
     private ProgressDialog progressBar;
-    private static String URL_LOGIN = "http://192.168.1.130/android_register_login/login.php";
+    private static String URL_LOGIN = "http://oufit.herokuapp.com/api/login";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         etEmail = findViewById(R.id.userEmailLog);
         etPassword = findViewById(R.id.userPasswordLog);
-        loading = findViewById(R.id.loading);
+        /*loading = findViewById(R.id.loading);*/
 
         // Checking for first time launch - before calling setContentView()
         prefManager= new PrefManager(this);
@@ -78,90 +88,30 @@ public class Login extends AppCompatActivity {
         regtxt=(TextView) findViewById(R.id.regtxt);
 
 
-        btLog.setOnClickListener(new View.OnClickListener() {
+        /*btLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 finish();
             }
-        });
+        });*/
 
-        /*btLog.setOnClickListener(new View.OnClickListener() {
+        btLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String mEmail = etEmail.getText().toString().trim();
                 String mPass = etPassword.getText().toString().trim();
 
                 if (!mEmail.isEmpty() || !mPass.isEmpty()) {
-                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                    finish();
+                    loginn();
+                    /*startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    finish();*/
                 } else {
                     etEmail.setError("Please insert your email");
                     etPassword.setError("Please insert your password");
                 }
             }
-        });*/
-
-        /*private void Login(final String etEmail, final String etPassword) {
-
-            loading.setVisibility(View.VISIBLE);
-            btLog.setVisibility(View.GONE);
-
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_LOGIN,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                String success = jsonObject.getString("success");
-                                JSONArray jsonArray = jsonObject.getJSONArray("login");
-
-                                if (success.equals("1")) {
-
-                                    for (int i=0; i < jsonArray.length(); i++) {
-                                        JSONObject object = jsonArray.getJSONObject(i);
-
-                                        String name = object.getString("name").trim();
-                                        String email = object.getString("email").trim();
-
-                                        Toast.makeText(Login.this, "Successfully Logged in "+name, Toast.LENGTH_SHORT).show();
-                                        loading.setVisibility(View.GONE);
-
-                                    }
-
-                                }
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                loading.setVisibility(View.GONE);
-                                btLog.setVisibility(View.VISIBLE);
-                                Toast.makeText(Login.this, "Error: "+e.toString(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            loading.setVisibility(View.GONE);
-                            btLog.setVisibility(View.VISIBLE);
-                            Toast.makeText(Login.this, "Error "+error.toString(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-
-            {
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("email", email);
-                    params.put("password", password);
-                    return params;
-                }
-            };
-
-            RequestQueue requestQueue = Volley.newRequestQueue(this);
-            requestQueue.add(stringRequest);
-
-        }*/
+        });
 
 
         regtxt.setOnClickListener(new View.OnClickListener() {
@@ -180,10 +130,77 @@ public class Login extends AppCompatActivity {
 
     }
 
+    private void loginn() {
+
+        pDialog = new ProgressDialog(Login.this);
+        pDialog.setMessage("Signing In...");
+        pDialog.setIndeterminate(false);
+        pDialog.setCancelable(false);
+        pDialog.show();
+
+        String mEmail1 = etEmail.getText().toString().trim();
+        String mPass1 = etPassword.getText().toString().trim();
+
+        Map<String, String> params = new HashMap<String, String>();
+        /*params.put("email", "milo77@example.org");
+        params.put("password", "et"); */
+        params.put("email", mEmail1);
+        params.put("password", mPass1);
+
+        CustomRequest jsObjRequest = new CustomRequest(Request.Method.POST, URL_LOGIN, params,
+                new Response.Listener<JSONObject>() {
+
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        pDialog.dismiss();
+                        //google.setVisibility(View.INVISIBLE);
+                        try {
+                            Log.d("Login step one!", response.toString());
+
+                            //Toast.makeText(Login.this, "response "+response, Toast.LENGTH_LONG).show();
+                            Toast.makeText(Login.this, "login success ", Toast.LENGTH_LONG).show();
+
+                            final String success = response.getString("token");
+                            // final int status = response.getInt("status");
+
+
+                            Log.d("Login Successful!", response.toString());
+
+                            Log.d("Login Successful!", success);
+
+                            //  Toast.makeText(Login.this, "user ", Toast.LENGTH_LONG).show();
+
+                            //Staring MainActivity
+                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(i);
+                            finish();
 
 
 
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
 
+            @Override
+            public void onErrorResponse(VolleyError response) {
+                pDialog.dismiss();
+                //  google.setVisibility(View.INVISIBLE);
+                Log.d("Response: ", response.toString());
+//                new SweetAlertDialog(LoginActivity.this, SweetAlertDialog.ERROR_TYPE)
+//                        .setTitleText("OOPS")
+//                        .setContentText("INCORRECT USERNAME OR PASSWORD")
+//                        .show();
+                Toast.makeText(Login.this, "INVALID CREDENTIALS", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        AppController.getInstance().addToRequestQueue(jsObjRequest);
 
     }
+
+
+}
 
