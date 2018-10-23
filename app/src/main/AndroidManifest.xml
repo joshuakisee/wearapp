@@ -3,7 +3,9 @@
     package="com.wearapp">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".AppController"
@@ -13,13 +15,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" />
         <activity
             android:name=".Register"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".About"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Splash"
             android:theme="@style/AppTheme.NoActionBar">
@@ -33,7 +35,18 @@
         <activity
             android:name=".Login"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Blog"></activity>
+        <activity android:name=".Blog" />
+        <activity
+            android:name=".activity.HomeActivity"
+            android:label="@string/title_activity_home" />
+        <activity
+            android:name=".activity.RecomActivity"
+            android:label="@string/title_activity_recom"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.uploadActivity"
+            android:label="@string/title_activity_upload"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

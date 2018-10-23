@@ -23,6 +23,13 @@
     <string name="skip">SKIP</string>
     <string name="start">GOT IT</string>
     <string name="next">Next</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Recommendation</string>
+    <string name="title_notifications">Blog</string>
+    <string name="title_activity_recom">RecomActivity</string>
+    <string name="base_url">http://oufit.herokuapp.com/api/</string>
+    <string name="title_activity_upload">uploadActivity</string>
 
 
 </resources>

@@ -1,23 +1,15 @@
 package com.wearapp;
 
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,15 +23,11 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.wearapp.PrefManager;*/
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.wearapp.activity.HomeActivity;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,6 +36,7 @@ import java.util.Map;
 
 public class Login extends AppCompatActivity {
 
+    public static final String MyPREFERENCES = "MyPrefs";
     private Button btLog;
     private PrefManager prefManager;
     private TextView regtxt, tv_reset_password;
@@ -154,25 +143,24 @@ public class Login extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         pDialog.dismiss();
-                        //google.setVisibility(View.INVISIBLE);
-                        try {
-                            Log.d("Login step one!", response.toString());
 
-                            //Toast.makeText(Login.this, "response "+response, Toast.LENGTH_LONG).show();
+                        try {
+                            JSONObject jObj = new JSONObject(response.toString());
+                            String token   = jObj.getString("token");
+
+                            Log.d("tokensss", token);
+
+                            SharedPreferences.Editor log_editor = getSharedPreferences(MyPREFERENCES, MODE_PRIVATE).edit();
+                            log_editor.putString("token",token);
+                            log_editor.commit();
+
+
                             Toast.makeText(Login.this, "login success ", Toast.LENGTH_LONG).show();
 
                             final String success = response.getString("token");
-                            // final int status = response.getInt("status");
-
-
-                            Log.d("Login Successful!", response.toString());
-
-                            Log.d("Login Successful!", success);
-
-                            //  Toast.makeText(Login.this, "user ", Toast.LENGTH_LONG).show();
 
                             //Staring MainActivity
-                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                            Intent i = new Intent(getApplicationContext(), HomeActivity.class);
                             startActivity(i);
                             finish();
 
